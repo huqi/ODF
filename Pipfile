@@ -5,8 +5,11 @@ name = "pypi"
 
 [packages]
 python-docx = "*"
+pyqt5 = "*"
+pyqt5-tools = "*"
 
 [dev-packages]
+autopep8 = "*"
 
 [requires]
 python_version = "3.8"
