@@ -1,9 +1,180 @@
+import os
+import sys
 import time
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
 from docx.shared import Inches, Pt
+
+from PyQt5.QtCore import QThread, pyqtSignal, Qt
+from PyQt5.QtGui import QGuiApplication, QIcon, QPixmap
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QWidget
+from win32com import client as wc
+from odf_ui import Ui_Form
+
+MAIN_FRAME_SIZE = {'WIDTH': 300, 'HEIGHT': 400}
+
+    
+def get_file_extension(file):
+    return os.path.splitext(file)[-1]
+
+def is_word_file(file):
+    return any(file.endswith(ext) for ext in ['.doc', '.docx', 'DOC', '.DOCX'])
+
+def doc_to_docx(file):
+    word = wc.Dispatch("Word.Application")
+    doc = word.Documents.Open(file) 
+    doc.SaveAs("{}x".format(new_file(file)), 12)
+    doc.Close() #关闭原来word文件
+    word.Quit()
+    
+def get_time_str():
+    return time.strftime("%Y%m%d%H%M%S", time.localtime())
+    
+def new_file(oldfile):
+    path, file = os.path.split(oldfile)
+    filename, ext = os.path.splitext(file)
+    new_filename = get_time_str() + filename + ext
+    
+    return os.path.join(path, new_filename)
+    
+
+
+class MyMainForm(QWidget, Ui_Form):
+    def __init__(self, parent=None):
+        '''
+        构造函数
+        '''
+        super(MyMainForm, self).__init__(parent)
+        self.setupUi(self)
+
+        self.img_blue = QPixmap('./src/drag-drop-blue.png')
+        self.img_grey = QPixmap('./src/drag-drop-grey.png')
+
+        self.setWindowTitle('公文格式化')
+        self.setWindowIcon(QIcon('./src/icon.png'))
+
+        x, y = self.getCenterPos()
+
+        self.setGeometry(
+            x, y, MAIN_FRAME_SIZE['WIDTH'], MAIN_FRAME_SIZE['HEIGHT'])
+        self.setFixedSize(self.width(), self.height())
+        self.label_button.setPixmap(self.img_grey)
+        self.label_button.setAlignment(Qt.AlignCenter)
+        self.progressBar.setValue(0)
+        self.setAcceptDrops(True)
+        self.running = False
+        
+    def getCenterPos(self):
+        '''
+        获得居中坐标
+        '''
+        screen = QGuiApplication.primaryScreen().size()
+
+        x = int((screen.width() - MAIN_FRAME_SIZE['WIDTH']) / 2)
+        y = int((screen.height() - MAIN_FRAME_SIZE['HEIGHT']) / 2)
+
+        return x, y
+    
+    def dragEnterEvent(self, event):
+        '''
+        拖入
+        '''
+        event.accept()
+        self.label_button.setPixmap(self.img_blue)
+
+    def dragMoveEvent(self, event):
+        '''
+        移动
+        '''
+        pass
+
+    def dragLeaveEvent(self, event):
+        '''
+        移出
+        '''
+        self.label_button.setPixmap(self.img_grey)
+        
+    def eventRestore(self, type, title, message):
+        '''
+        进度条重置
+        '''
+        if type == "warning":
+            QMessageBox.warning(self, title, message)
+            
+        self.label_button.setPixmap(self.img_grey)
+        self.progressBar.setValue(0)
+        self.label_progress.setText("(0/0)")
+        self.running = False
+
+    def dropEvent(self, event):
+        '''
+        松开鼠标
+        '''
+        if self.running:
+            self.eventRestore("warning", "错误", "有任务正在运行")
+            return
+
+        file = event.mimeData().urls()[0].toLocalFile()
+        
+        if not is_word_file(file):
+            self.eventRestore("warning", "错误", "文件类型错误，只支持doc/docx文件类型")
+            return
+        
+        self.running = True
+        
+        odf = ODFThread(file)
+        odf.run()
+        #odf.start()
+        
+
+
+
+
+class ODFThread(QThread):
+    '''
+    image to pdf 线程
+    '''
+    def __init__(self, file):
+        '''
+        构造函数
+        '''
+        super(ODFThread, self).__init__()
+        self.file = file
+        
+
+
+
+    def run(self):
+        '''
+        线程启动函数
+        '''
+        try:
+            # dirs = getDirList(self.path)
+            # self.imgToPDF(dirs)
+            if get_file_extension(self.file) in [".doc", ".DOC"]:
+                doc_to_docx(self.file)
+                               
+        except:
+            # self.triggerError.emit(True)
+            pass
+    
+def main():
+    '''
+    主函数
+    '''
+
+    app = QApplication(sys.argv)
+    myWin = MyMainForm()
+    myWin.show()
+
+    sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+    main()
+
 
 
 b_title_flag = True
@@ -308,7 +479,7 @@ P_STYLE = {
 }
 
 
-doc = Doc("test.docx")
-doc.run()
-doc.print()
-doc.write()
+# doc = Doc("test.docx")
+# doc.run()
+# doc.print()
+# doc.write()
