@@ -1,0 +1,92 @@
+{
+    "b_title": {
+        "font": "方正楷体_GBK",
+        "font_size": "三号",
+        "indent": 0,
+        "align": "两端",
+        "space_before": 0,
+        "space_after": 0,
+        "line_spacing": 28.8
+    },
+    "title": {
+        "font": "方正小标宋_GBK",
+        "font_size": "二号",
+        "indent": 0,
+        "align": "居中",
+        "space_before": 0,
+        "space_after": 0,
+        "line_spacing": 28.8
+    },
+    "a_title": {
+        "font": "方正楷体_GBK",
+        "font_size": "三号",
+        "indent": 0,
+        "align": "居中",
+        "space_before": 0,
+        "space_after": 0,
+        "line_spacing": 28.8
+    },
+    "target": {
+        "font": "方正仿宋_GBK",
+        "font_size": "三号",
+        "indent": 0,
+        "align": "居左",
+        "space_before": 0,
+        "space_after": 0,
+        "line_spacing": 28.8
+    },
+    "head1": {
+        "font": "方正黑体_GBK",
+        "font_size": "三号",
+        "indent": 2,
+        "align": "两端",
+        "space_before": 0,
+        "space_after": 0,
+        "line_spacing": 28.8
+    },
+    "head2": {
+        "font": "方正黑体_GBK",
+        "font_size": "三号",
+        "indent": 2,
+        "align": "两端",
+        "space_before": 0,
+        "space_after": 0,
+        "line_spacing": 28.8
+    },
+    "head3": {
+        "font": "方正黑体_GBK",
+        "font_size": "三号",
+        "indent": 2,
+        "align": "两端",
+        "space_before": 0,
+        "space_after": 0,
+        "line_spacing": 28.8
+    },
+    "head4": {
+        "font": "方正黑体_GBK",
+        "font_size": "三号",
+        "indent": 2,
+        "align": "两端",
+        "space_before": 0,
+        "space_after": 0,
+        "line_spacing": 28.8
+    },
+    "tail": {
+        "font": "方正仿宋_GBK",
+        "font_size": "三号",
+        "indent": 0,
+        "align": "居右",
+        "space_before": 0,
+        "space_after": 0,
+        "line_spacing": 28.8
+    },
+    "text": {
+        "font": "方正仿宋_GBK",
+        "font_size": "三号",
+        "indent": 2,
+        "align": "两端",
+        "space_before": 0,
+        "space_after": 0,
+        "line_spacing": 28.8
+    }
+}
