@@ -6,7 +6,8 @@
         "align": "两端",
         "space_before": 0,
         "space_after": 0,
-        "line_spacing": 28.8
+        "line_spacing": 28.8,
+        "line_count": 2
     },
     "title": {
         "font": "方正小标宋_GBK",
@@ -24,7 +25,8 @@
         "align": "居中",
         "space_before": 0,
         "space_after": 0,
-        "line_spacing": 28.8
+        "line_spacing": 28.8,
+        "line_count": 2
     },
     "target": {
         "font": "方正仿宋_GBK",
@@ -78,7 +80,8 @@
         "align": "居右",
         "space_before": 0,
         "space_after": 0,
-        "line_spacing": 28.8
+        "line_spacing": 28.8,
+        "line_count": 2
     },
     "text": {
         "font": "方正仿宋_GBK",

@@ -4,10 +4,17 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 STR_WINDOW_TITLE = "公文格式化"
 STR_WARNING = "警告"
 STR_ERROR = "错误"
+STR_DONE = "完成"
+STR_ALREADY_DONE = "已完成，格式化后的文件名为{0}"
 STR_UNKNOWN = "未知错误"
 STR_LOAD_CONF_ERR = "未找到配置文件，已将配置文件恢复为默认值"
 STR_RUNNING_ERR = "有任务正在运行"
 STR_DOC_TYPE_ERR = "文件类型错误，只支持doc/docx文件类型"
+STR_LABEL_DOCX = "正在转换为DOCX文件……"
+STR_LABEL_REPLACE_SPACE = "正在处理空格……"
+STR_LABEL_REPLACE_BLANK = "正在处理空行……"
+STR_LABEL_FORMAT = "正在处理格式……"
+STR_LABEL_WRITE = "正在写入……"
 
 MAIN_FRAME_SIZE = {'WIDTH': 300, 'HEIGHT': 400}
 CONF_FILENAME = "conf.json"
@@ -15,6 +22,8 @@ CONF_FILENAME = "conf.json"
 IMG_DRAG_DROP_BLUE_PATH = './src/drag-drop-blue.png'
 IMG_DRAG_DROP_GRAY_PATH = './src/drag-drop-grey.png'
 IMG_ICON_PATH = './src/icon.png'
+
+STEP = ['replace_space', 'replace_blank', 'format', 'write']
 
 P_STYLE = {
     'b_title': {
@@ -24,7 +33,8 @@ P_STYLE = {
         'align' : '两端',
         'space_before' : 0,
         'space_after' : 0,
-        'line_spacing' : 28.8
+        'line_spacing' : 28.8,
+        'line_count' : 2
     },
     'title': {
         'font': '方正小标宋_GBK',
@@ -42,7 +52,8 @@ P_STYLE = {
         'align' : '居中',
         'space_before' : 0,
         'space_after' : 0,
-        'line_spacing' : 28.8
+        'line_spacing' : 28.8,
+        'line_count' : 2
     },
     'target': {
         'font': '方正仿宋_GBK',
@@ -96,7 +107,8 @@ P_STYLE = {
         'align' : '居右',
         'space_before' : 0,
         'space_after' : 0,
-        'line_spacing' : 28.8
+        'line_spacing' : 28.8,
+        'line_count' : 2
     },
     'text': {
         'font': '方正仿宋_GBK',
@@ -108,8 +120,6 @@ P_STYLE = {
         'line_spacing' : 28.8
     }
 }
-
-
 
 x_dict = {
     ',': '，',
