@@ -50,6 +50,34 @@ def new_file(oldfile):
     return '\\'.join(new_path.split('/'))
 
 
+class OdfConfig:
+    def __init__(self, conf_file):
+        self.file = conf_file
+
+        if os.path.exists(conf_file):
+            self.data = self.loadConfig()
+            self.create_flag = False
+        else:
+            self.data = self.restoreConfig(P_STYLE)
+            self.create_flag = True
+
+    def loadConfig(self):
+        with open(self.file, 'r', encoding="gbk") as f:
+            return json.load(f)
+
+    def restoreConfig(self, data):
+        with open(self.file, "w", encoding="gbk") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+
+        return data
+
+    def getConfig(self):
+        return self.data
+
+    def getCreateFlag(self):
+        return self.create_flag
+
+
 def get_conf(self):
 
     data = None
@@ -301,12 +329,10 @@ class MyMainForm(QWidget, Ui_Form):
 
     def setConfig(self, conf):
         self.conf = conf
-        self.checkBox_b_title.setChecked(
-            self.conf['default']['b_title_checked'])
-        self.checkBox_a_title.setChecked(
-            self.conf['default']['a_title_checked'])
-        self.checkBox_target.setChecked(self.conf['default']['target_checked'])
-        self.checkBox_tail.setChecked(self.conf['default']['tail_checked'])
+        self.checkBox_b_title.setChecked(conf['default']['b_title_checked'])
+        self.checkBox_a_title.setChecked(conf['default']['a_title_checked'])
+        self.checkBox_target.setChecked(conf['default']['target_checked'])
+        self.checkBox_tail.setChecked(conf['default']['tail_checked'])
 
     def getCenterPos(self):
         '''
@@ -478,18 +504,6 @@ class ODFThread(QThread):
             self.sig_err.emit()
 
 
-def load_conf(filename):
-    with open(filename, 'r', encoding="utf-8") as f:
-        return json.load(f)
-
-
-def restore_conf(filename, data):
-    with open(filename, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
-
-    return data
-
-
 def main():
     # '''
     # 主函数
@@ -497,7 +511,12 @@ def main():
     app = QApplication(sys.argv)
     myWin = MyMainForm()
     myWin.show()
-    myWin.setConfig(get_conf(myWin))
+
+    conf = OdfConfig(CONF_FILENAME)
+    myWin.setConfig(conf.getConfig())
+
+    if conf.getCreateFlag():
+        QMessageBox.warning(myWin, STR_WARNING, STR_LOAD_CONF_ERR)
 
     sys.exit(app.exec_())
 

@@ -1,6 +1,5 @@
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
-
 STR_WINDOW_TITLE = "公文格式化"
 STR_WARNING = "警告"
 STR_ERROR = "错误"
