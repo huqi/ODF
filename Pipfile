@@ -8,6 +8,8 @@ python-docx = "*"
 pyqt5 = "*"
 pyqt5-tools = "*"
 pypiwin32 = "*"
+pyinstaller = "*"
+pillow = "*"
 
 [dev-packages]
 autopep8 = "*"
