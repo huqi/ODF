@@ -91,5 +91,11 @@
         "space_before": 0,
         "space_after": 0,
         "line_spacing": 28.8
+    },
+    "default": {
+        "b_title_checked": false,
+        "a_title_checked": false,
+        "target_checked": true,
+        "tail_checked": true
     }
 }

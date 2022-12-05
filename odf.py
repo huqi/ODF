@@ -1,4 +1,4 @@
-import codecs
+import ctypes
 import json
 import os
 import sys
@@ -15,9 +15,6 @@ from win32com import client as wc
 
 from odf_conf import *
 from odf_ui import Ui_Form
-
-
-import ctypes
 
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
 
@@ -48,9 +45,10 @@ def new_file(oldfile):
     path, file = os.path.split(oldfile)
     filename, ext = os.path.splitext(file)
     new_filename = get_time_str() + "-" + filename + ext
-    
+
     new_path = os.path.join(path, new_filename)
     return '\\'.join(new_path.split('/'))
+
 
 def get_conf(self):
 
@@ -96,6 +94,7 @@ class Para:
     def print_text(self):
         print(self.text)
 
+
 class Doc:
     document = None
     filename = ""
@@ -113,12 +112,12 @@ class Doc:
         for p in self.paragraphs:
             p.print_type()
             p.print_text()
-            
+
     def setConf(self, b_title, a_title, tail):
         self.b_title_count = b_title
         self.a_title_count = a_title
         self.tail_count = tail
-        
+
     def setAbility(self, ability):
         self.ability = ability
 
@@ -128,14 +127,14 @@ class Doc:
         self.sig_progress_init = sig_progress_init
         self.sig_progress_index = sig_progress_index
         self.sig_done = sig_done
-        
+
     def setDToDx(self, flag):
         self.d_to_dx_flag = flag
-        
+
     def setStep(self, step, step_max):
         self.step = step
         self.step_max = step_max
-        
+
     def wash_line(self):
         para = []
         self.step += 1
@@ -162,11 +161,11 @@ class Doc:
         self.sig_label.emit(self.step, self.step_max)
         self.sig_label_info.emit(STR_LABEL_FORMAT)
         self.sig_progress_init.emit(len(para))
-        
+
         for i, line in enumerate(para):
             line_no += 1
             self.sig_progress_index.emit(line_no)
-            
+
             if self.ability['checkBox_b_title'] and b_title_c < self.b_title_count:
                 self.paragraphs.append(Para(line, "b_title"))
                 b_title_c += 1
@@ -222,7 +221,7 @@ class Doc:
         self.sig_label.emit(self.step, self.step_max)
         self.sig_label_info.emit(STR_LABEL_REPLACE_SPACE)
         self.sig_progress_init.emit(len(self.document.paragraphs))
-        
+
         for i, line in enumerate(self.document.paragraphs):
             self.sig_progress_index.emit(i+1)
             self.doc.append(self.replace_x(line.text))
@@ -236,15 +235,15 @@ class Doc:
 
     def write(self):
         doc = Document()
-        
+
         self.step += 1
         self.sig_label.emit(self.step, self.step_max)
         self.sig_label_info.emit(STR_LABEL_WRITE)
         self.sig_progress_init.emit(len(self.paragraphs))
-        
+
         for i, line in enumerate(self.paragraphs):
             self.sig_progress_index.emit(i+1)
-            
+
             p = doc.add_paragraph()
             run = p.add_run(line.text)
             run.font.name = 'Times New Roman'
@@ -272,9 +271,10 @@ class Doc:
 
         if self.d_to_dx_flag:
             os.remove(self.filename)
-            
+
         doc.save(self.filename)
         self.sig_done.emit(self.filename.split('\\')[-1])
+
 
 class MyMainForm(QWidget, Ui_Form):
     def __init__(self, parent=None):
@@ -301,6 +301,12 @@ class MyMainForm(QWidget, Ui_Form):
 
     def setConfig(self, conf):
         self.conf = conf
+        self.checkBox_b_title.setChecked(
+            self.conf['default']['b_title_checked'])
+        self.checkBox_a_title.setChecked(
+            self.conf['default']['a_title_checked'])
+        self.checkBox_target.setChecked(self.conf['default']['target_checked'])
+        self.checkBox_tail.setChecked(self.conf['default']['tail_checked'])
 
     def getCenterPos(self):
         '''
@@ -335,9 +341,8 @@ class MyMainForm(QWidget, Ui_Form):
     def showMessageBox(self, type, title, msg):
         if type == "warning":
             QMessageBox.warning(self, title, msg)
-        elif type == "info":    
-            QMessageBox.information(self, title, msg)       
-
+        elif type == "info":
+            QMessageBox.information(self, title, msg)
 
     def eventRestore(self, type, title, message):
         '''
@@ -352,43 +357,42 @@ class MyMainForm(QWidget, Ui_Form):
 
     def evenErrorCallback(self):
         self.eventRestore("warning", STR_ERROR, STR_UNKNOWN)
-        
+
     def evenLabelCallback(self, i, count):
         self.label_progress.setText("({0}/{1})".format(i, count))
-        
+
     def evenLabelInfoCallback(self, s):
         self.label_info.setText(s)
-        
+
     def evenProgressInitCallback(self, max):
         self.progressBar.setMaximum(max)
-        
+
     def evenProgressIndexCallback(self, i):
         self.progressBar.setValue(i)
-        
+
     def evenDoneCallback(self, filename):
         self.eventRestore("info", STR_DONE, STR_ALREADY_DONE.format(filename))
-       
+
     def getAbility(self):
-        
-        ability = {'checkBox_b_title' : False, 
-                   'checkBox_a_title' : False, 
-                   'checkBox_target' : False, 
-                   'checkBox_tail' : False}
-        
+
+        ability = {'checkBox_b_title': False,
+                   'checkBox_a_title': False,
+                   'checkBox_target': False,
+                   'checkBox_tail': False}
+
         if self.checkBox_b_title.isChecked():
             ability['checkBox_b_title'] = True
-            
+
         if self.checkBox_a_title.isChecked():
             ability['checkBox_a_title'] = True
-            
+
         if self.checkBox_target.isChecked():
             ability['checkBox_target'] = True
-            
+
         if self.checkBox_tail.isChecked():
             ability['checkBox_tail'] = True
-            
+
         return ability
-            
 
     def dropEvent(self, event):
         '''
@@ -404,7 +408,8 @@ class MyMainForm(QWidget, Ui_Form):
             self.eventRestore("warning", STR_ERROR, STR_DOC_TYPE_ERR)
             return
         self.running = True
-        self.odf = ODFThread('\\'.join(file.split('/')), self.conf, self.getAbility())
+        self.odf = ODFThread('\\'.join(file.split('/')),
+                             self.conf, self.getAbility())
         self.odf.sig_err.connect(self.evenErrorCallback)
         self.odf.sig_label.connect(self.evenLabelCallback)
         self.odf.sig_label_info.connect(self.evenLabelInfoCallback)
@@ -425,7 +430,7 @@ class ODFThread(QThread):
     sig_progress_init = pyqtSignal(int)
     sig_progress_index = pyqtSignal(int)
     sig_done = pyqtSignal(str)
-    
+
     def __init__(self, file, conf, ability):
         '''
         构造函数
@@ -448,7 +453,7 @@ class ODFThread(QThread):
         if get_file_extension(self.file) in [".doc", ".DOC"]:
             d_to_dx = 1
             step_count += 1
-        
+
         try:
             if d_to_dx:
                 self.sig_label.emit(1, step_count)
@@ -458,11 +463,13 @@ class ODFThread(QThread):
                 self.file = doc_to_docx(self.file)
 
             self.doc = Doc(self.file)
-            self.doc.setSignal(self.sig_label, self.sig_label_info, self.sig_progress_init, self.sig_progress_index, self.sig_done)
+            self.doc.setSignal(self.sig_label, self.sig_label_info,
+                               self.sig_progress_init, self.sig_progress_index, self.sig_done)
             self.doc.setDToDx(d_to_dx)
             self.doc.setStep(d_to_dx, step_count)
             self.doc.setAbility(self.ability)
-            self.doc.setConf(self.conf['b_title']["line_count"], self.conf['a_title']["line_count"], self.conf['tail']["line_count"],)
+            self.doc.setConf(self.conf['b_title']["line_count"], self.conf['a_title']
+                             ["line_count"], self.conf['tail']["line_count"],)
             self.doc.run()
             self.doc.write()
 
@@ -470,15 +477,18 @@ class ODFThread(QThread):
             print(e)
             self.sig_err.emit()
 
+
 def load_conf(filename):
-    with codecs.open(filename, 'r', "utf-8") as f:
+    with open(filename, 'r', encoding="utf-8") as f:
         return json.load(f)
 
+
 def restore_conf(filename, data):
-    with codecs.open(filename, "w", "utf-8") as f:
+    with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
     return data
+
 
 def main():
     # '''
