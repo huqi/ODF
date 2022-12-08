@@ -5,9 +5,8 @@ import sys
 import time
 
 from docx import Document
-from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
-from docx.shared import Inches, Pt
+from docx.shared import Pt
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QGuiApplication, QIcon, QPixmap
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QWidget
@@ -51,50 +50,68 @@ def new_file(oldfile):
 
 
 class OdfConfig:
+    """配置文件类
+    """
+
     def __init__(self, conf_file):
+        """
+        获取配置文件
+        """
+
         self.file = conf_file
 
         if os.path.exists(conf_file):
             self.data = self.loadConfig()
             self.create_flag = False
         else:
-            self.data = self.restoreConfig(P_STYLE)
+            self.data = self.initConfig(P_STYLE)
             self.create_flag = True
 
     def loadConfig(self):
+        """装载配置
+
+        Returns:
+            json: 配置信息
+        """
+
         with open(self.file, 'r', encoding="gbk") as f:
             return json.load(f)
 
-    def restoreConfig(self, data):
+    def initConfig(self, data):
+        """初始化配置文件
+
+        Args:
+            data (json): 配置信息
+
+        Returns:
+            json: 配置信息
+        """
+
         with open(self.file, "w", encoding="gbk") as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
 
         return data
 
     def getConfig(self):
+        """返回配置信息
+
+        Returns:
+            json: 配置信息
+        """
+
         return self.data
 
     def getCreateFlag(self):
+        """获取配置文件创建标识
+
+        Returns:
+            bool: 是否新创建了配置文件
+        """
+
         return self.create_flag
 
 
-def get_conf(self):
-
-    data = None
-
-    try:
-        data = load_conf(CONF_FILENAME)
-    except:
-        QMessageBox.warning(self, STR_WARNING, STR_LOAD_CONF_ERR)
-        data = restore_conf(CONF_FILENAME, P_STYLE)
-
-    return data
-
-
 class Para:
-    text = ""
-    content = ""
-    type = ""
 
     def __init__(self, text, type=None):
         if not type:
@@ -107,6 +124,7 @@ class Para:
             self.text += "。"
         else:
             self.text = text
+            self.content = ""
 
     def get_type(self, text):
         for k, v in HEAD_SIGN.items():
@@ -216,8 +234,8 @@ class Doc:
                 a_title_c += 1
 
                 if a_title_c == self.a_title_count:
-                    self.paragraphs.append(Para("", "text"))
 
+                    self.paragraphs.append(Para("", "text"))
                 continue
 
             if self.ability['checkBox_target'] and not target_line_done:
